@@ -1,6 +1,6 @@
 # Flashlight Beamshot Comparator
 
-A standalone, responsive web tool for comparing flashlight beamshots. Built using vanilla HTML, CSS, and JavaScript with no external dependencies. Designed for easy embedding into static websites or CMS platforms like WordPress.
+A standalone, responsive web tool for comparing large amounts of flashlight beamshots. Built using vanilla HTML, CSS, and JavaScript with no external dependencies. Designed for easy embedding into static websites or CMS platforms like WordPress.
 
 ## Included Files
 
