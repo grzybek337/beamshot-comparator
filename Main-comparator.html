@@ -1,0 +1,561 @@
+<div id="flashlight-tool-wrapper">
+    <style>
+        /* CORE LAYOUT */
+        #flashlight-tool-wrapper {
+            background-color: #121212;
+            color: #ffffff;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            padding: 10px;
+            box-sizing: border-box;
+            width: 100%;
+            min-height: 500px;
+            display: block;
+            position: relative;
+        }
+        #flashlight-tool-wrapper * { box-sizing: border-box; }
+
+        /* GRID */
+        #flashlight-tool-wrapper .ft-container {
+            display: flex;
+            gap: 6px;
+            width: 100%;
+            flex-wrap: wrap;
+        }
+        #flashlight-tool-wrapper .ft-column {
+            flex: 1;
+            min-width: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        /* UI ELEMENTS */
+        #flashlight-tool-wrapper label {
+            font-weight: bold;
+            font-size: 1em;
+            margin-bottom: 4px;
+            display: block;
+        }
+        #flashlight-tool-wrapper .location-group {
+            width: 100%;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #333;
+        }
+        #flashlight-tool-wrapper h3 {
+            font-size: 1.2em;
+            margin: 0 0 10px 0;
+            font-weight: bold;
+        }
+
+        /* DROPDOWNS */
+        #flashlight-tool-wrapper select {
+            width: 100%;
+            padding: 8px;
+            font-size: 14px;
+            border-radius: 4px;
+            border: 1px solid #444;
+            background-color: #1f1f1f;
+            color: #ffffff;
+            outline: none;
+            cursor: pointer;
+        }
+
+        /* CARDS & IMAGES */
+        #flashlight-tool-wrapper .ft-card {
+            background-color: #1f1f1f;
+            border-radius: 6px;
+            padding: 5px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+            border: 1px solid #333;
+        }
+        #flashlight-tool-wrapper .beam-container {
+            width: 100%;
+            height: 0;
+            padding-bottom: 75%; /* 4:3 Aspect Ratio */
+            position: relative;
+            background-color: #000;
+            border-radius: 3px;
+            margin-bottom: 5px;
+            overflow: hidden;
+            border: 1px solid #333;
+        }
+        #flashlight-tool-wrapper .beam-img-content {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: 1;
+        }
+
+        /* LOADER */
+        #flashlight-tool-wrapper .loader {
+            border: 3px solid #333;
+            border-top: 3px solid #fff;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            margin-left: -15px;
+            margin-top: -15px;
+            z-index: 0;
+            display: none;
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+        /* SPECS TABLE */
+        #flashlight-tool-wrapper .specs-block {
+            background-color: rgba(0,0,0,0.2);
+            border-radius: 3px;
+            overflow: hidden;
+            border: 1px solid #333;
+        }
+        #flashlight-tool-wrapper .specs-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 2px 5px;
+            font-size: 0.8em;
+            line-height: 1.2;
+        }
+        #flashlight-tool-wrapper .specs-row:nth-child(odd) {
+            background-color: rgba(255, 255, 255, 0.05);
+        }
+        #flashlight-tool-wrapper .label-text { color: #aaa; }
+        #flashlight-tool-wrapper .value-text { font-weight: bold; color: #fff; }
+
+        /* NAVIGATION BUTTONS */
+        #flashlight-tool-wrapper .nav-row {
+            display: flex;
+            gap: 4px;
+            margin-top: 5px;
+        }
+        #flashlight-tool-wrapper .nav-btn {
+            flex: 1;
+            background-color: #333;
+            color: #fff;
+            border: 1px solid #444;
+            border-radius: 3px;
+            padding: 3px 0;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: bold;
+            font-family: monospace;
+            transition: background 0.2s;
+        }
+        #flashlight-tool-wrapper .nav-btn:hover { background-color: #444; }
+
+        /* SLIDER */
+        #flashlight-tool-wrapper .slider-section {
+            width: 100%;
+            margin-top: 30px;
+            padding-top: 15px;
+            border-top: 1px solid #333;
+        }
+        #flashlight-tool-wrapper .slider-header { text-align: center; margin-bottom: 15px; }
+        #flashlight-tool-wrapper .wipe-outer-box {
+            width: 100%;
+            max-width: 800px;
+            margin: 0 auto;
+            position: relative;
+            border-radius: 6px;
+            overflow: hidden;
+            border: 2px solid #444;
+            height: 0;
+            padding-bottom: 75%;
+            cursor: col-resize;
+        }
+        #flashlight-tool-wrapper #wipe-img-bg { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; z-index: 1; }
+        #flashlight-tool-wrapper #wipe-img-fg { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; z-index: 2; clip-path: inset(0 50% 0 0); }
+        #flashlight-tool-wrapper .wipe-handle-line { position: absolute; top: 0; bottom: 0; left: 50%; width: 2px; background-color: #fff !important; z-index: 3; pointer-events: none; box-shadow: 0 0 5px rgba(0,0,0,0.8); }
+        #flashlight-tool-wrapper .wipe-handle-circle { width: 20px; height: 20px; background-color: #fff !important; border-radius: 50%; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); box-shadow: 0 2px 6px rgba(0,0,0,0.6); }
+        #flashlight-tool-wrapper .wipe-input { position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0; z-index: 4; cursor: col-resize; margin: 0; touch-action: none; }
+
+        /* EXPORT SECTION */
+        #flashlight-tool-wrapper .export-section { width: 100%; margin-top: 30px; padding-top: 15px; border-top: 1px solid #333; text-align: center; }
+        #flashlight-tool-wrapper .cb-group { display: flex; flex-direction: row; flex-wrap: wrap; justify-content: center; margin-bottom: 15px; gap: 20px; }
+        #flashlight-tool-wrapper .cb-container { display: flex; align-items: center; cursor: pointer; color: #ccc; font-size: 0.9em; }
+        #flashlight-tool-wrapper .cb-container input { margin-right: 8px; cursor: pointer; }
+        #flashlight-tool-wrapper .generated-image { max-width: 100%; height: auto; border: 2px solid #444; border-radius: 8px; margin-top: 10px; display: block; margin-left: auto; margin-right: auto; }
+        #flashlight-tool-wrapper .ft-btn { background-color: #333; color: white; border: 1px solid #555; padding: 8px 16px; border-radius: 4px; cursor: pointer; font-size: 13px; margin: 0 4px; transition: background 0.2s; }
+        #flashlight-tool-wrapper .ft-btn:hover { background-color: #444; }
+        #flashlight-tool-wrapper .export-option { margin-bottom: 30px; }
+
+        /* LIGHTBOX */
+        #ft-lightbox { display: none; position: fixed; z-index: 99999; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.95); align-items: center; justify-content: center; flex-direction: column; }
+        #ft-lightbox img { max-width: 95%; max-height: 90%; object-fit: contain; border: 2px solid #333; }
+        #ft-lightbox-close { position: absolute; top: 20px; right: 30px; color: #f1f1f1; font-size: 40px; font-weight: bold; cursor: pointer; }
+
+        @media (max-width: 600px) { #flashlight-tool-wrapper { padding: 5px; } .ft-card { padding: 3px; } .specs-row { font-size: 0.7em; padding: 1px 3px; } select { font-size: 13px; padding: 6px; } }
+    </style>
+
+    <div class="location-group">
+        <label for="locationSelect">Step 1: Select Location</label>
+        <select id="locationSelect" onchange="changeLocation()"></select>
+    </div>
+
+    <div class="ft-container">
+        <div class="ft-column">
+            <label for="light1">Select Light 1:</label>
+            <select id="light1" onchange="updateCard(1)"></select>
+            <div class="ft-card">
+                <div class="beam-container">
+                    <div id="loader-1" class="loader"></div>
+                    <img id="img-1" src="" class="beam-img-content">
+                </div>
+                <div id="specs-1" class="specs-block"></div>
+                <div class="nav-row">
+                    <button class="nav-btn" onclick="cycleLight(1, -1)">&lt;</button>
+                    <button class="nav-btn" onclick="cycleLight(1, 1)">&gt;</button>
+                </div>
+            </div>
+        </div>
+        
+        <div class="ft-column">
+            <label for="light2">Select Light 2:</label>
+            <select id="light2" onchange="updateCard(2)"></select>
+            <div class="ft-card">
+                <div class="beam-container">
+                    <div id="loader-2" class="loader"></div>
+                    <img id="img-2" src="" class="beam-img-content">
+                </div>
+                <div id="specs-2" class="specs-block"></div>
+                <div class="nav-row">
+                    <button class="nav-btn" onclick="cycleLight(2, -1)">&lt;</button>
+                    <button class="nav-btn" onclick="cycleLight(2, 1)">&gt;</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="slider-section">
+            <div class="slider-header">
+                <h3>Direct Comparison Slider</h3>
+                <p>Drag the white line to compare.</p>
+            </div>
+            <div class="wipe-outer-box">
+                <img id="wipe-img-bg" src="">
+                <img id="wipe-img-fg" src="">
+                <div id="wipe-line" class="wipe-handle-line"><div class="wipe-handle-circle"></div></div>
+                <input type="range" min="0" max="100" value="50" class="wipe-input" id="wipe-slider" oninput="updateWipe()">
+            </div>
+        </div>
+
+        <div class="export-section">
+            <h3>Download comparison as .JPG</h3>
+            <div class="cb-group">
+                <label class="cb-container">
+                    <input type="checkbox" id="addLabelsToExport" checked onchange="refreshAllVisuals()"> Show names
+                </label>
+                <label class="cb-container">
+                    <input type="checkbox" id="addSpecsToExport" onchange="refreshAllVisuals()"> Show specs
+                </label>
+            </div>
+
+            <div class="export-option">
+                <p style="color:#fff; margin-bottom:5px;">Option 1: Side by Side</p>
+                <img id="composite-image" class="generated-image" src="">
+                <div style="margin-top: 10px; display: flex; justify-content: center; gap: 10px;">
+                    <button type="button" class="ft-btn" onclick="openLightbox('composite-image')">Fullscreen</button>
+                    <button type="button" class="ft-btn" onclick="downloadImage('composite-image')">Download</button>
+                </div>
+            </div>
+
+            <div class="export-option">
+                <p style="color:#fff; margin-bottom:5px;">Option 2: Vertical Stack</p>
+                <img id="composite-image-vert" class="generated-image" src="">
+                <div style="margin-top: 10px; display: flex; justify-content: center; gap: 10px;">
+                    <button type="button" class="ft-btn" onclick="openLightbox('composite-image-vert')">Fullscreen</button>
+                    <button type="button" class="ft-btn" onclick="downloadImage('composite-image-vert')">Download</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="ft-lightbox" onclick="closeLightbox()">
+        <span id="ft-lightbox-close">&times;</span>
+        <img id="ft-lightbox-img" src="">
+        <div style="color: #aaa; margin-top: 10px;">Click anywhere to close</div>
+    </div>
+
+    <script>
+    (function() { // Wrap in IIFE to prevent variable conflicts
+
+        /* --- USER DATA START --- */
+        const specLabels = { "led": "LED Type", "lumen": "Lumen", "throw": "Throw", "cdlm": "Cd/lm Ratio*", "candela": "Candela", "reflector": "Reflector", "battery": "Battery" };
+        
+        const locations = {
+            "loc1": "Example Location 1",
+            "loc2": "Example Location 2"
+        };
+
+        const lightData = {
+            "demo1_loc1": {
+                name: "Flashlight A (High)",
+                location: "loc1",
+                lumen: "2000",
+                throw: "300",
+                cdlm: "11",
+                image: "https://placehold.co/800x600/333/fff?text=Flashlight+A"
+            },
+            "demo2_loc1": {
+                name: "Flashlight B (Turbo)",
+                location: "loc1",
+                lumen: "4000",
+                throw: "500",
+                cdlm: "15",
+                image: "https://placehold.co/800x600/555/fff?text=Flashlight+B"
+            },
+            "demo3_loc2": {
+                name: "Flashlight A (Medium)",
+                location: "loc2",
+                lumen: "500",
+                throw: "100",
+                cdlm: "5",
+                image: "https://placehold.co/800x600/222/fff?text=Flashlight+A"
+            },
+            "demo4_loc2": {
+                name: "Flashlight B (Low)",
+                location: "loc2",
+                lumen: "50",
+                throw: "20",
+                cdlm: "2",
+                image: "https://placehold.co/800x600/444/fff?text=Flashlight+B"
+            }
+        };
+        /* --- USER DATA END --- */
+
+        // Expose functions globally for the buttons to work
+        window.cycleLight = function(idSuffix, direction) {
+            const select = document.getElementById('light' + idSuffix);
+            if (!select) return;
+            let newIndex = select.selectedIndex + direction;
+            const maxIndex = select.options.length - 1;
+            if (newIndex < 0) newIndex = maxIndex;
+            if (newIndex > maxIndex) newIndex = 0;
+            select.selectedIndex = newIndex;
+            updateCard(idSuffix);
+        };
+
+        window.refreshAllVisuals = function() {
+            updateCard(1);
+            updateCard(2);
+        };
+        
+        window.updateWipe = function() {
+            const slider = document.getElementById("wipe-slider");
+            const percent = slider.value;
+            document.getElementById("wipe-line").style.left = percent + "%";
+            document.getElementById("wipe-img-fg").style.clipPath = `inset(0 ${100 - percent}% 0 0)`;
+        };
+
+        window.changeLocation = function() {
+            const locSelect = document.getElementById('locationSelect');
+            const selectedLoc = locSelect.value;
+            const matchingLights = Object.keys(lightData)
+                .filter(key => lightData[key].location === selectedLoc)
+                .sort((a, b) => lightData[a].name.localeCompare(lightData[b].name));
+            populateDropdown('light1', matchingLights);
+            populateDropdown('light2', matchingLights);
+            updateCard(1);
+            updateCard(2);
+        };
+
+        window.updateCard = updateCard; // Expose for dropdown change
+        window.openLightbox = function(id) { const src=document.getElementById(id).src; if(src){document.getElementById('ft-lightbox-img').src=src;document.getElementById('ft-lightbox').style.display='flex';}};
+        window.closeLightbox = function() { document.getElementById('ft-lightbox').style.display='none'; };
+        window.downloadImage = downloadImage;
+        window.generateComposite = generateComposite; // Needed for checkboxes
+
+        function initSystem() {
+            const locSelect = document.getElementById('locationSelect');
+            if (locSelect) {
+                locSelect.innerHTML = "";
+                for (const [key, label] of Object.entries(locations)) {
+                    const opt = document.createElement("option");
+                    opt.value = key; opt.innerText = label; locSelect.appendChild(opt);
+                }
+                changeLocation();
+            }
+        }
+
+        function populateDropdown(elementId, keys) {
+            const select = document.getElementById(elementId);
+            select.innerHTML = "";
+            keys.forEach(key => {
+                const opt = document.createElement("option");
+                opt.value = key; opt.innerText = lightData[key].name; select.appendChild(opt);
+            });
+            if (elementId === 'light2' && keys.length > 1) { select.selectedIndex = 1; }
+        }
+
+        function updateCard(idSuffix) {
+            const selectBox = document.getElementById(`light${idSuffix}`);
+            if (!selectBox || !selectBox.value) return;
+            const data = lightData[selectBox.value];
+            const imgEl = document.getElementById(`img-${idSuffix}`);
+            const loaderEl = document.getElementById(`loader-${idSuffix}`);
+
+            loaderEl.style.display = 'block';
+            imgEl.style.opacity = '0.5';
+
+            imgEl.onload = function() {
+                loaderEl.style.display = 'none';
+                imgEl.style.opacity = '1';
+                drawTextOnPreview(imgEl, data);
+                generateComposite();
+            };
+            imgEl.src = data.image;
+
+            const specsContainer = document.getElementById(`specs-${idSuffix}`);
+            let html = '';
+            for (const [key, label] of Object.entries(specLabels)) {
+                if (data[key]) {
+                    html += `<div class="specs-row"><span class="label-text">${label}</span><span class="value-text">${data[key]}</span></div>`;
+                }
+            }
+            specsContainer.innerHTML = html;
+
+            if (idSuffix === 1) { document.getElementById('wipe-img-fg').src = data.image; }
+            else { document.getElementById('wipe-img-bg').src = data.image; }
+        }
+
+        function drawTextOnPreview(imgElement, data) {
+            const showLabels = document.getElementById('addLabelsToExport').checked;
+            const showSpecs = document.getElementById('addSpecsToExport').checked;
+            if (!showLabels && !showSpecs) return;
+
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+            canvas.width = imgElement.naturalWidth;
+            canvas.height = imgElement.naturalHeight;
+            ctx.drawImage(imgElement, 0, 0);
+
+            const fontSize = Math.max(14, Math.round(canvas.width * 0.02));
+            drawInfoBlock(ctx, data, fontSize, fontSize, canvas.width);
+
+            if (!imgElement.getAttribute('data-modified')) {
+                imgElement.setAttribute('data-modified', 'true');
+                imgElement.src = canvas.toDataURL('image/jpeg', 0.9);
+            } else {
+                imgElement.removeAttribute('data-modified');
+            }
+        }
+
+        function drawInfoBlock(ctx, data, x, y, totalWidth) {
+            const showNames = document.getElementById('addLabelsToExport').checked;
+            const showSpecs = document.getElementById('addSpecsToExport').checked;
+            if (!showNames && !showSpecs) return;
+
+            const fontSize = Math.max(14, Math.round(totalWidth * 0.02));
+            ctx.font = "bold " + fontSize + "px Arial";
+            let lines = [];
+            if (showNames) lines.push(data.name);
+            if (showSpecs) {
+                if (data.lumen && data.lumen !== 'X') lines.push(data.lumen + "lm");
+                if (data.throw && data.throw !== 'X') lines.push(data.throw + "m");
+                if (data.cdlm && data.cdlm !== 'X') lines.push(data.cdlm + " cd/lm");
+            }
+            if (lines.length === 0) return;
+
+            const padding = fontSize * 0.5;
+            const lineHeight = fontSize * 1.2;
+            let maxWidth = 0;
+            lines.forEach(line => {
+                const m = ctx.measureText(line).width;
+                if (m > maxWidth) maxWidth = m;
+            });
+            const boxWidth = maxWidth + (padding * 2);
+            const boxHeight = (lines.length * lineHeight) + padding;
+
+            ctx.fillStyle = "rgba(0, 0, 0, 0.6)";
+            ctx.fillRect(x, y, boxWidth, boxHeight);
+            ctx.fillStyle = "#ffffff";
+            ctx.textBaseline = "top";
+            ctx.textAlign = "left";
+            lines.forEach((line, index) => {
+                ctx.fillText(line, x + padding, y + padding + (index * lineHeight));
+            });
+        }
+
+        function generateComposite() {
+            const key1 = document.getElementById('light1').value;
+            const key2 = document.getElementById('light2').value;
+            if (!key1 || !key2) return;
+            const data1 = lightData[key1];
+            const data2 = lightData[key2];
+            const img1 = new Image(); const img2 = new Image();
+            img1.crossOrigin = "Anonymous"; img2.crossOrigin = "Anonymous";
+            img1.src = data1.image; img2.src = data2.image;
+            let loaded = 0;
+            const onImageLoad = () => {
+                loaded++;
+                if (loaded === 2) {
+                    drawHorizontalCanvas(img1, img2, data1, data2);
+                    drawVerticalCanvas(img1, img2, data1, data2);
+                }
+            };
+            img1.onload = onImageLoad; img2.onload = onImageLoad;
+        }
+
+        function drawHorizontalCanvas(img1, img2, data1, data2) {
+            try {
+                const canvas = document.createElement('canvas');
+                const ctx = canvas.getContext('2d');
+                const w = img1.naturalWidth + img2.naturalWidth;
+                const imgH = Math.max(img1.naturalHeight, img2.naturalHeight);
+                const totalH = imgH;
+                canvas.width = w; canvas.height = totalH;
+                ctx.fillStyle = "#121212"; ctx.fillRect(0, 0, w, totalH);
+                ctx.drawImage(img1, 0, 0);
+                ctx.drawImage(img2, img1.naturalWidth, 0);
+                ctx.beginPath(); ctx.moveTo(img1.naturalWidth, 0); ctx.lineTo(img1.naturalWidth, imgH);
+                ctx.lineWidth = 2; ctx.strokeStyle = "#9d0801"; ctx.stroke();
+                const singleW = w / 2;
+                const margin = Math.max(14, Math.round(singleW * 0.02));
+                drawInfoBlock(ctx, data1, margin, margin, singleW);
+                drawInfoBlock(ctx, data2, img1.naturalWidth + margin, margin, singleW);
+                document.getElementById('composite-image').src = canvas.toDataURL('image/jpeg', 0.9);
+            } catch (e) { console.error("Canvas CORS", e); }
+        }
+
+        function drawVerticalCanvas(img1, img2, data1, data2) {
+            try {
+                const canvas = document.createElement('canvas');
+                const ctx = canvas.getContext('2d');
+                const w = Math.max(img1.naturalWidth, img2.naturalWidth);
+                const h = img1.naturalHeight + img2.naturalHeight;
+                canvas.width = w; canvas.height = h;
+                ctx.drawImage(img1, 0, 0); ctx.drawImage(img2, 0, img1.naturalHeight);
+                ctx.beginPath(); ctx.moveTo(0, img1.naturalHeight); ctx.lineTo(w, img1.naturalHeight);
+                ctx.lineWidth = 2; ctx.strokeStyle = "#9d0801"; ctx.stroke();
+                const margin = Math.max(14, Math.round(w * 0.02));
+                drawInfoBlock(ctx, data1, margin, margin, w);
+                drawInfoBlock(ctx, data2, margin, img1.naturalHeight + margin, w);
+                document.getElementById('composite-image-vert').src = canvas.toDataURL('image/jpeg', 0.9);
+            } catch (e) { console.error("Canvas Vert", e); }
+        }
+
+        function sanitizeName(name) { return name.trim().replace(/[^a-zA-Z0-9 ]/g, '').replace(/\s+/g, '-'); }
+        
+        function downloadImage(imgId) {
+            const img = document.getElementById(imgId);
+            if (!img.src) return alert("Image not ready!");
+            const k1 = document.getElementById('light1').value;
+            const k2 = document.getElementById('light2').value;
+            const n1 = k1 ? sanitizeName(lightData[k1].name) : "L1";
+            const n2 = k2 ? sanitizeName(lightData[k2].name) : "L2";
+            const link = document.createElement('a');
+            link.download = `Compare-${n1}-vs-${n2}.jpg`;
+            link.href = img.src;
+            document.body.appendChild(link); link.click(); document.body.removeChild(link);
+        }
+
+        setTimeout(initSystem, 200);
+
+    })(); // End IIFE
+    </script>
+</div>
