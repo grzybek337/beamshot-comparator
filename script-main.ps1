@@ -10,7 +10,7 @@
 $SourceFolder = ".\photos" 
 
 # 2. The URL where these images WILL be hosted on your website
-$WebUrlPrefix = "https://your-website.com/uploads"
+$WebUrlPrefix = "https://your-website.com/wp-content/uploads/YYYY/MM/"
 # ---------------------------------
 
 if (-not (Test-Path $SourceFolder)) {
@@ -62,4 +62,5 @@ foreach ($img in $images) {
 Clear-Host
 Write-Host "COPY THIS CODE INTO YOUR HTML (lightData):" -ForegroundColor Yellow
 Write-Host $finalOutput -ForegroundColor White
+
 Pause
