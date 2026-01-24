@@ -28,7 +28,7 @@ The tool relies on a list of data (names, specs, and image URLs) located inside 
 
 ### Step 1: Upload images to your website
 Before configuring the tool, your beamshot photos must be hosted online.
-1.  Upload your `.jpg/.png` images to your website (e.g. WordPress Media Library).
+1.  Upload your `.jpg/.png` images to your website (e.g. WordPress Media Library). Tool was created with `4:3` format images in mind.
 2.  Copy the "Base URL" where they are stored.
     * *Example:* `https://grzybekreviews.pl/wp-content/uploads/2025/12` (as it is in my website)
     * You can find this link on Wordpress, going into the gallery, selecting a recently added image and copying its link.
