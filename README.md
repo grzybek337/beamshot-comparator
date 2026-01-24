@@ -28,21 +28,22 @@ The tool relies on a list of data (names, specs, and image URLs) located inside 
 
 ### Step 1: Upload images to your website
 Before configuring the tool, your beamshot photos must be hosted online.
-1.  Upload your `.jpg` images to your website (e.g. WordPress Media Library).
+1.  Upload your `.jpg/.png` images to your website (e.g. WordPress Media Library).
 2.  Copy the "Base URL" where they are stored.
     * *Example:* `https://grzybekreviews.pl/wp-content/uploads/2025/12` (as it is in my website)
+    * You can find this link on Wordpress, going into the gallery, selecting a recently added image and copying its link.
 
 ### Step 2: Generate the configuration code
 
 #### Method A: Using the Script (Faster for many images)
-1.  Create a folder named `photos` on your computer in the same directory as the `.ps1` script.
-2.  Place your beamshot images inside the `photos` folder.
-3.  Name files clearly (e.g., `Acebeam_L35_Turbo.jpg`). The script uses the filename as the flashlight name.
-4.  Open the script (`script-main.ps1` or `script-compact-reviews.ps1`) with a notepad.
-5.  Find the line `$WebUrlPrefix` and change it to your website's upload URL from Step 1. Save and close.
+1.  Create a folder with all the beamshots you want to add (e.g. on your desktop).
+2.  Name the image files clearly (e.g., `Acebeam_L35_Turbo.jpg`). The script uses the filename as the flashlight name (names can be edited later in the code itself).
+3.  Open the script (`script-main.ps1` or `script-compact-reviews.ps1`) with a notepad.
+4.  Find the line `$WebUrlPrefix` and change it to your website's upload URL from Step 1.
+5.  Find the link 'X' and paste in the location of your beamshots folder. Save and close.
 6.  Right-click the script and select **Run with PowerShell**.
 7.  Follow the prompts. The script will generate the formatted code block for you.
-8.  Copy the block
+8.  Copy the block and go to **Step 3**.
 
 #### Method B: Manual Entry
 1.  Open the HTML file (`main-comparator.html` or `compact-comparator-reviews.html`) in a text editor.
@@ -69,12 +70,12 @@ Before configuring the tool, your beamshot photos must be hosted online.
 ```
 ### Step 3: Update the HTML File
 1.  Take the code generated in Step 2 (either from the PowerShell window or your manual typing).
-2.  Open the HTML file.
-3.  Replace/add in the existing content inside `const lightData = { ... };` with your new code.
+2.  Open the HTML file with a notepad.
+3.  Replace/add in to the existing content inside `const lightData = { ... };` with your new code.
 
 ---
 
-## Installation on Website
+## Installation on your Website
 
 1.  Open your edited HTML file (`main-comparator.html` or `compact-comparator-reviews.html`).
 2.  Copy the entire code.
