@@ -39,7 +39,7 @@ Before configuring the tool, your beamshot photos must be hosted online.
 1.  Create a folder with all the beamshots you want to add (e.g. on your desktop).
 2.  Name the image files clearly (e.g., `Acebeam_L35_Turbo.jpg`). The script uses the filename as the flashlight name (names can be edited later in the code itself).
 3.  Open the script (`script-main.ps1` or `script-compact-reviews.ps1`) with a notepad.
-4.  Find the line `$WebUrlPrefix` and change it to your website's upload URL from Step 1.
+4.  Find the line with `your-website.com` and change it to your website's upload URL from Step 1.
 5.  Find the link 'X' and paste in the location of your beamshots folder. Save and close.
 6.  Right-click the script and select **Run with PowerShell**.
 7.  Follow the prompts. The script will generate the formatted code block for you.
