@@ -6,7 +6,7 @@
 
 # --- CONFIGURATION (EDIT THIS) ---
 $SourceFolder = ".\photos" 
-$WebUrlPrefix = "https://your-website.com/uploads"
+$WebUrlPrefix = "https://your-website.com/wp-content/uploads/2025/12/"
 # ---------------------------------
 
 if (-not (Test-Path $SourceFolder)) {
@@ -36,4 +36,5 @@ foreach ($img in $images) {
 Clear-Host
 Write-Host "COPY THIS CODE INTO YOUR HTML (lightData):" -ForegroundColor Yellow
 Write-Host $finalOutput -ForegroundColor White
+
 Pause
