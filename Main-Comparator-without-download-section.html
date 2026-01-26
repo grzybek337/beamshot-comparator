@@ -1,0 +1,313 @@
+<div class="flashlight-tool-wrapper">
+
+    <style>
+        .flashlight-tool-wrapper {
+            background-color: #121212;
+            color: #ffffff;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            padding: 10px;
+            box-sizing: border-box;
+            width: 100%;
+            min-height: 450px;
+            display: block;
+            position: relative;
+            margin-bottom: 30px;
+        }
+        .flashlight-tool-wrapper * { box-sizing: border-box; }
+
+        /* GRID */
+        .flashlight-tool-wrapper .ft-container { display: flex; gap: 2px; width: 100%; flex-wrap: wrap; }
+        .flashlight-tool-wrapper .ft-column { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 8px; }
+
+        /* UI */
+        .flashlight-tool-wrapper label { font-weight: bold; font-size: 1em; margin-bottom: 4px; display: block; }
+        .flashlight-tool-wrapper .location-group { width: 100%; margin-bottom: 15px; padding-bottom: 10px; border-bottom: 1px solid #333; }
+        
+        /* DROPDOWNS */
+        .flashlight-tool-wrapper select {
+            width: 100%; padding: 8px; font-size: 14px; border-radius: 4px; border: 1px solid #444;
+            background-color: #1f1f1f; color: #ffffff; outline: none; cursor: pointer;
+            appearance: none; -webkit-appearance: none; -moz-appearance: none;
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22white%22%3E%3Cpath%20d%3D%22M7%2010l5%205%205-5z%22%2F%3E%3C%2Fsvg%3E");
+            background-repeat: no-repeat; background-position: right 10px top 50%; background-size: 20px auto; 
+        }
+        
+        /* CARDS */
+        .flashlight-tool-wrapper .ft-card {
+            background-color: #1f1f1f; border-radius: 3px; padding: 1px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.3); border: 1px solid #333;
+        }
+        .flashlight-tool-wrapper .beam-container {
+            width: 100%; height: 0; padding-bottom: 75%; position: relative;
+            background-color: #000; border-radius: 3px; margin-bottom: 0; overflow: hidden;
+        }
+        .flashlight-tool-wrapper .beam-img-content { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; z-index: 1; }
+
+        /* LOADER */
+        .flashlight-tool-wrapper .loader {
+            border: 3px solid #333; border-top: 3px solid #fff; border-radius: 50%;
+            width: 30px; height: 30px; animation: spin 1s linear infinite;
+            position: absolute; top: 50%; left: 50%; margin-left: -15px; margin-top: -15px;
+            z-index: 0; display: none;
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+        /* SPECS */
+        .flashlight-tool-wrapper .specs-block { background-color: rgba(0,0,0,0.2); border-radius: 3px; overflow: hidden; border: 1px solid #333; margin-top: 5px; }
+        .flashlight-tool-wrapper .specs-row { display: flex; justify-content: space-between; padding: 2px 5px; font-size: 0.8em; line-height: 1.2; }
+        .flashlight-tool-wrapper .specs-row:nth-child(odd) { background-color: rgba(255, 255, 255, 0.05); } 
+        .flashlight-tool-wrapper .label-text { color: #aaa; }
+        .flashlight-tool-wrapper .value-text { font-weight: bold; color: #fff; }
+
+        /* NAV BUTTONS */
+        .flashlight-tool-wrapper .nav-row { display: flex; gap: 4px; margin-top: 5px; }
+        .flashlight-tool-wrapper .nav-btn {
+            flex: 1; background-color: #333; color: #fff; border: 1px solid #444; border-radius: 3px;
+            padding: 3px 0; cursor: pointer; font-size: 13px; font-weight: bold; font-family: monospace;
+            transition: background 0.2s;
+        }
+        .flashlight-tool-wrapper .nav-btn:hover { background-color: #444; }
+
+        /* SLIDER */
+        .flashlight-tool-wrapper .slider-section { width: 100%; margin-top: 10px; border-top: 1px solid #333; }
+        .flashlight-tool-wrapper .slider-header { text-align: center; margin-bottom: 10px; }
+        .flashlight-tool-wrapper .wipe-outer-box {
+            width: 100%; margin: 0 auto; position: relative;
+            border-radius: 6px; overflow: hidden; border: 2px solid #444; height: 0; padding-bottom: 75%; cursor: col-resize;
+        }
+        .flashlight-tool-wrapper .wipe-img-bg { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; z-index: 1; }
+        .flashlight-tool-wrapper .wipe-img-fg { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; z-index: 2; clip-path: inset(0 50% 0 0); }
+        
+        .flashlight-tool-wrapper .wipe-handle-line {
+            position: absolute; top: 0; bottom: 0; left: 50%; width: 2px;
+            background-color: #fff !important; z-index: 3; pointer-events: none; box-shadow: 0 0 5px rgba(0,0,0,0.8);
+        }
+        .flashlight-tool-wrapper .wipe-handle-circle {
+            width: 20px; height: 20px; background-color: #fff !important; border-radius: 50%;
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); box-shadow: 0 2px 6px rgba(0,0,0,0.6);
+        }
+        .flashlight-tool-wrapper .wipe-input { position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0; z-index: 4; cursor: col-resize; margin: 0; }
+
+        @media (max-width: 600px) { .flashlight-tool-wrapper { padding: 5px; } .flashlight-tool-wrapper .ft-card { padding: 2px; } }
+    </style>
+
+    <div class="location-group">
+        <label>Select Location</label>
+        <select class="location-select"></select>
+    </div>
+
+    <div class="ft-container">
+        <div class="ft-column">
+            <label>Select Light 1:</label>
+            <select class="light1-select"></select>
+            <div class="ft-card">
+                <div class="beam-container">
+                    <div class="loader loader-1"></div>
+                    <img class="beam-img-content img-1" src="">
+                </div>
+                <div class="specs-block specs-1"></div>
+                <div class="nav-row">
+                    <button class="nav-btn prev-1">&lt;</button>
+                    <button class="nav-btn next-1">&gt;</button>
+                </div>
+            </div>
+        </div>
+        
+        <div class="ft-column">
+            <label>Select Light 2:</label>
+            <select class="light2-select"></select>
+            <div class="ft-card">
+                <div class="beam-container">
+                    <div class="loader loader-2"></div>
+                    <img class="beam-img-content img-2" src="">
+                </div>
+                <div class="specs-block specs-2"></div>
+                <div class="nav-row">
+                    <button class="nav-btn prev-2">&lt;</button>
+                    <button class="nav-btn next-2">&gt;</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="slider-section">
+            <div class="slider-header">
+                <h3>Slider Comparison</h3>
+            </div>
+            <div class="wipe-outer-box">
+                <img class="wipe-img-bg" src="">
+                <img class="wipe-img-fg" src="">
+                <div class="wipe-handle-line"><div class="wipe-handle-circle"></div></div>
+                <input type="range" min="0" max="100" value="50" class="wipe-input">
+            </div>
+        </div>
+    </div>
+
+    <script>
+    (function() {
+        // --- USER CONFIGURATION (PASTE GENERATED CODE HERE) ---
+        
+        const specLabels = { 
+            "led": "LED Type", 
+            "lumen": "Lumen", 
+            "throw": "Throw", 
+            "cdlm": "Cd/lm Ratio*", 
+            "candela": "Candela" 
+        };
+        
+        const locations = {
+            "loc1": "Example Location 1",
+            "loc2": "Example Location 2"
+        };
+
+        const lightData = {
+            "demo1_loc1": { 
+                name: "Flashlight A (High)", 
+                location: "loc1", 
+                lumen: "2000", 
+                throw: "300", 
+                cdlm: "11", 
+                image: "https://placehold.co/800x600/333/fff?text=Flashlight+A" 
+            },
+            "demo2_loc1": { 
+                name: "Flashlight B (Turbo)", 
+                location: "loc1", 
+                lumen: "4000", 
+                throw: "500", 
+                cdlm: "15", 
+                image: "https://placehold.co/800x600/555/fff?text=Flashlight+B" 
+            },
+            "demo3_loc2": { 
+                name: "Flashlight A (Medium)", 
+                location: "loc2", 
+                lumen: "500", 
+                throw: "100", 
+                cdlm: "5", 
+                image: "https://placehold.co/800x600/222/fff?text=Flashlight+A" 
+            },
+            "demo4_loc2": { 
+                name: "Flashlight B (Low)", 
+                location: "loc2", 
+                lumen: "50", 
+                throw: "20", 
+                cdlm: "2", 
+                image: "https://placehold.co/800x600/444/fff?text=Flashlight+B" 
+            }
+        };
+        // --- END USER CONFIGURATION ---
+
+        // Scoped Root Element (Finds the wrapper this script lives in)
+        const root = document.currentScript.closest('.flashlight-tool-wrapper');
+        
+        // Element selectors helper
+        const get = (sel) => root.querySelector(sel);
+
+        // UI Elements
+        const locSelect = get('.location-select');
+        const sel1 = get('.light1-select');
+        const sel2 = get('.light2-select');
+        const img1 = get('.img-1');
+        const img2 = get('.img-2');
+        const loader1 = get('.loader-1');
+        const loader2 = get('.loader-2');
+        const specs1 = get('.specs-1');
+        const specs2 = get('.specs-2');
+        const wipeFg = get('.wipe-img-fg');
+        const wipeBg = get('.wipe-img-bg');
+        const slider = get('.wipe-input');
+        const wipeLine = get('.wipe-handle-line');
+
+        // Nav Buttons
+        get('.prev-1').onclick = () => cycleLight(sel1, -1, 1);
+        get('.next-1').onclick = () => cycleLight(sel1, 1, 1);
+        get('.prev-2').onclick = () => cycleLight(sel2, -1, 2);
+        get('.next-2').onclick = () => cycleLight(sel2, 1, 2);
+
+        // Event Listeners
+        locSelect.onchange = changeLocation;
+        sel1.onchange = () => updateCard(1);
+        sel2.onchange = () => updateCard(2);
+        slider.oninput = updateWipe;
+
+        function initSystem() {
+            locSelect.innerHTML = "";
+            for (const [key, label] of Object.entries(locations)) {
+                const opt = document.createElement("option");
+                opt.value = key; opt.innerText = label; locSelect.appendChild(opt);
+            }
+            changeLocation();
+        }
+
+        function changeLocation() {
+            const selectedLoc = locSelect.value;
+            const matchingLights = Object.keys(lightData)
+                .filter(key => lightData[key].location === selectedLoc)
+                .sort((a, b) => lightData[a].name.localeCompare(lightData[b].name));
+
+            populateDropdown(sel1, matchingLights);
+            populateDropdown(sel2, matchingLights);
+            
+            updateCard(1);
+            updateCard(2);
+        }
+
+        function populateDropdown(selectElement, keys) {
+            selectElement.innerHTML = "";
+            keys.forEach(key => {
+                const opt = document.createElement("option");
+                opt.value = key; opt.innerText = lightData[key].name; selectElement.appendChild(opt);
+            });
+            // Default 2nd dropdown to 2nd item if available
+            if (selectElement === sel2 && keys.length > 1) { selectElement.selectedIndex = 1; }
+        }
+
+        function cycleLight(selectElement, direction, idSuffix) {
+            let newIndex = selectElement.selectedIndex + direction;
+            const maxIndex = selectElement.options.length - 1;
+            if (newIndex < 0) newIndex = maxIndex;
+            if (newIndex > maxIndex) newIndex = 0;
+            selectElement.selectedIndex = newIndex;
+            updateCard(idSuffix);
+        }
+
+        function updateCard(idSuffix) {
+            const selectBox = (idSuffix === 1) ? sel1 : sel2;
+            if (!selectBox.value) return;
+            const data = lightData[selectBox.value];
+            
+            const imgEl = (idSuffix === 1) ? img1 : img2;
+            const loaderEl = (idSuffix === 1) ? loader1 : loader2;
+            const specsContainer = (idSuffix === 1) ? specs1 : specs2;
+
+            loaderEl.style.display = 'block';
+            imgEl.style.opacity = '0.5';
+
+            imgEl.onload = function() {
+                loaderEl.style.display = 'none';
+                imgEl.style.opacity = '1';
+            };
+            imgEl.src = data.image;
+
+            let html = '';
+            for (const [key, label] of Object.entries(specLabels)) {
+                if (data[key]) {
+                    html += `<div class="specs-row"><span class="label-text">${label}</span><span class="value-text">${data[key]}</span></div>`;
+                }
+            }
+            specsContainer.innerHTML = html;
+
+            if (idSuffix === 1) { wipeFg.src = data.image; } 
+            else { wipeBg.src = data.image; }
+        }
+
+        function updateWipe() {
+            const percent = slider.value;
+            wipeLine.style.left = percent + "%";
+            wipeFg.style.clipPath = `inset(0 ${100 - percent}% 0 0)`;
+        }
+
+        // Initialize immediately
+        initSystem();
+
+    })();
+    </script>
+</div>
