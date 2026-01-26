@@ -9,13 +9,16 @@ The full-featured version of the tool.
 * **Features:** Location selector, metadata table (Lumen, Throw, Cd/lm), image export (canvas generation), and slider comparison.
 * **Usage:** Great for comparing a large catalog of beamshots, switching between locations, and creating downloadable comparison images.
 
-### 2. compact-comparator-reviews.html
+### 2. Main-Comparator-without-download-section.html
+Same as above, but without the image export section. Useful for reviewers that want to compare multiple flashlights in multiple locations.
+
+### 3. compact-comparator-reviews.html
 A minimalist version of the tool.
 * **Features:** Comparison slider and image labels only. No metadata table, location selector, or export functions.
 * **Usage:** Intended for comparing a small-ish amount of lights (e.g., Review Item vs Competitor) within a single location.
 * **Note:** This script uses isolated scope and unique ID prefixes to allow co-existence with the main comparator on the same page.
 
-### 3. Generator Scripts (*.ps1)
+### 4. Generator Scripts (*.ps1)
 PowerShell scripts used to automate the generation of the JSON configuration objects.
 * `script-main.ps1`: Generates configuration for the Main Comparator (prompts for Lumens [lm] and Throw [m], autofills them and calculates cd/lm).
 * `script-compact-reviews.ps1`: Generates configuration for the Compact Comparator (names and URLs only).
